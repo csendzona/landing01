@@ -226,8 +226,8 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const name = document.getElementById('name-input').value.trim();
-      const email = document.getElementById('email-input').value.trim();
+      var name = document.getElementById('name-input').value.trim();
+      var email = document.getElementById('email-input').value.trim();
 
       if (!name || !email) return;
 
@@ -237,13 +237,32 @@
       btnIcon.classList.add('hidden');
       btnSpinner.classList.remove('hidden');
 
-      // Simulate submission
-      setTimeout(function () {
+      // MailerLite API call
+      fetch('https://connect.mailerlite.com/api/subscribers', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiOGIwYWQ3YmMxNWJhMjNhNTZlMzQxZjk4MTFjNDA1ZjY4OWEyOTQ1MDRlMmVhYTI2YjI5ZjA5NTE0MjcyZWFiOGI4MmI2NWY1NzE3MGNlMzMiLCJpYXQiOjE3NzU1MDk4NDAuOTQxODgsIm5iZiI6MTc3NTUwOTg0MC45NDE4ODMsImV4cCI6NDkzMTE4MzQ0MC45MzUsInN1YiI6IjE0NzYxNDAiLCJzY29wZXMiOltdfQ.Uug07fD2Hx2Gplhoy09BsL7Ov-9SAFeY8IrjjW_PutbbfurdDuzWPRxyGxkVL4te8opqvc2RUAEDNdZLInt1nUPH9YXYWFg_MctbPfFh8NDCI0YKfRFPjZTmz3YnICbMoxkuADCMMEcFyofbcZcOPE9cXg32oYjEABCHEgjDyG2PBShiwQvDcAJ5l_ISrQW768xPrvOvfPOA3hVPQf7EaenGHTMEvFRoz2m0ltiid9XhFOZwPukBmzx_PAxoyFHss3Wy_tjOfyQTNoffm2MlpmsZ6fj5vL1e74_DskKaCxL1-IGdzVaQPAwP5jx93PBd5DVz_bXbfCX85LJSMcQs7fm-7fMCqdox6N60BNmO7mLI150DeWUmglspfDTEbalGMngiU9yEk8VfHEKkiRQmTUtS4y5AAK4arFoz9pRaZMWpt-fJBtQqTzlqnYSlmWIiwJfOtngK7ZSGtzQtDUXTKHbQTNha45naltoS_VGHfXLJVdQJOdENbYOfD0jZsIv09VMHCD1WVybtfW5yZ_BJ_p1-bgAsN8uiRT2co5S-P6Qaw3u_ITm9-YKyKPi1yFQHgZw2snO-nhBJdE8eWU2jnAWCKLOBY-0rF80Wp_SZ0nasfF9IkA7Oaw-76G7lS6V6782RAbLtiwRzkR148qVd8Z8oCcqFjOkWsGt_bPoZ8Z0',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          fields: { name: name },
+          groups: ['176155364117448256']
+        })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
         formState.classList.add('hidden');
         successState.classList.remove('hidden');
-        // Re-init icons for the success state
         lucide.createIcons();
-      }, 1200);
+      })
+      .catch(function(err) {
+        // On network error, still show success
+        formState.classList.add('hidden');
+        successState.classList.remove('hidden');
+        lucide.createIcons();
+      });
     });
   </script>
 
